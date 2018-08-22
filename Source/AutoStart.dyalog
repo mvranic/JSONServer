@@ -6,7 +6,7 @@
  empty←0∊⍴
  getEnv←{2 ⎕NQ'.' 'GetEnvironment'⍵}
 
- validParams←'ConfigFile' 'CodeLocation' 'Port' 'InitializeFn' 'AllowedFns' ⍝ to be added - 'Secure' 'RootCertDir' 'SSLValidation' 'ServerCertFile' 'ServerKeyFile'
+ validParams←'ConfigFile' 'CodeLocation' 'Port' 'InitializeFn' 'AllowedFns' 'Threaded' ⍝ to be added - 'Secure' 'RootCertDir' 'SSLValidation' 'ServerCertFile' 'ServerKeyFile'
  mask←~empty¨values←getEnv¨validParams
  params←mask⌿validParams,⍪values
  NoSession←~empty getEnv'NoSession'
