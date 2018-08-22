@@ -13,10 +13,11 @@
     :Field Public Traverse←0       ⍝ traverse subordinate namespaces to search for classes (applies only if ClassInterface>0)
     :Field Public IncludeFns←''    ⍝ vector of vectors for function names to be included (can use regex or ? and * as wildcards)
     :Field Public ExcludeFns←''    ⍝ vector of vectors for function names to be excluded (can use regex or ? and * as wildcards)
+    :Field Public Threaded←1       ⍝ Run server in separathe thread
 
     :Field _includeRegex←''        ⍝ compiled regex from IncludeFns
     :Field _excludeRegex←''        ⍝ compiled regex from ExcludeFns
-
+    
 ⍝ Fields related to running a secure server (to be implemented)
     :Field Public Secure←0
 ⍝    :Field Public RootCertDir
@@ -230,7 +231,11 @@
     ∇
 
     ∇ RunServer
-      {}Server&⍬
+      :If Threaded
+          {}Server&⍬
+      :Else
+          {}Server ⍬
+      :EndIf
     ∇
 
     ∇ Server arg;wres;rc;obj;evt;data;ref;ip
