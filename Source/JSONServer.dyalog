@@ -231,6 +231,10 @@
     ∇
 
     ∇ RunServer
+      :if 80≡⎕DR Threaded  
+         Threaded←⍎Threaded
+      :EndIf
+  
       :If Threaded
           {}Server&⍬
       :Else
