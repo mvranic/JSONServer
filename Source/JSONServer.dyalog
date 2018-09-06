@@ -13,7 +13,8 @@
     :Field Public Traverse←0       ⍝ traverse subordinate namespaces to search for classes (applies only if ClassInterface>0)
     :Field Public IncludeFns←''    ⍝ vector of vectors for function names to be included (can use regex or ? and * as wildcards)
     :Field Public ExcludeFns←''    ⍝ vector of vectors for function names to be excluded (can use regex or ? and * as wildcards)
-    :Field Public Threaded←1       ⍝ Run server in separathe thread
+    :Field Public Threaded←1       ⍝ Run server in separathe thread (0=no, 1=yes)
+    :Field Public AllowHttpGet←0   ⍝ Allow HTTP GET method - i.e. there is no left argument (0=no, 1=yes)
 
     :Field _includeRegex←''        ⍝ compiled regex from IncludeFns
     :Field _excludeRegex←''        ⍝ compiled regex from ExcludeFns
@@ -231,10 +232,6 @@
     ∇
 
     ∇ RunServer
-      :if 80≡⎕DR Threaded  
-         Threaded←⍎Threaded
-      :EndIf
-  
       :If Threaded
           {}Server&⍬
       :Else
@@ -329,7 +326,12 @@
       :EndIf
      
       :Trap Debug↓0
-          payload←{0∊⍴⍵:⍵ ⋄ 0 ⎕JSON ⍵}ns.Req.Body
+          :Select ns.Req.Method 
+          :Case 'post'
+              payload←{0∊⍴⍵:⍵ ⋄ 0 ⎕JSON ⍵}ns.Req.Body 
+          :Case 'get'
+              payload←{0∊⍴⍵:⍵ ⋄ 0 ⎕JSON ⍵}ns.Req.Body 
+          :Endselect
       :Else
           →0⍴⍨'Could not parse payload as JSON'ns.Req.Fail 400
       :EndTrap
@@ -455,7 +457,7 @@
           Complete∨←(0∊⍴length)>∨/'chunked'⍷'transfer-encoding'GetFromTable Headers ⍝ or no length supplied and we're not chunked
           :If Complete
           :AndIf ##.HtmlInterface∧~(⊂Page)∊(,'/')'/favicon.ico'
-              →0⍴⍨'(Request method should be POST)'Fail 405×'post'≢Method
+              →0⍴⍨'(Request method should be POST)'Fail 405×~(⊂Method)∊(1 ##.AllowHttpGet)/'post' 'get'
               →0⍴⍨'(Bad URI)'Fail 400×'/'≠⊃Page
               →0⍴⍨'(Content-Type should be application/json)'Fail 400×~'application/json'begins lc'content-type'GetFromTable Headers
           :EndIf
