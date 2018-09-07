@@ -8,8 +8,9 @@
 
  numParams←0 0 1 0 0 1 1
  validParams←'ConfigFile' 'CodeLocation' 'Port' 'InitializeFn' 'AllowedFns' 'Threaded' 'AllowHttpGet' ⍝ to be added - 'Secure' 'RootCertDir' 'SSLValidation' 'ServerCertFile' 'ServerKeyFile'
- mask←~empty¨values←getEnv¨validParams
- (mask/values)←⍎¨mask/values
+ values←getEnv¨validParams
+ mask←~empty¨values
+ ((mask∧numParams)/values)←⍎¨(mask∧numParams)/values
  params←mask⌿validParams,⍪values
  NoSession←~empty getEnv'NoSession'
 
