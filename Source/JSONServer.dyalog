@@ -15,7 +15,7 @@
     :Field Public ExcludeFns←''    ⍝ vector of vectors for function names to be excluded (can use regex or ? and * as wildcards)
     :Field Public Threaded←1       ⍝ Run server in separathe thread (0=no, 1=yes)
     :Field Public AllowHttpGet←0   ⍝ Allow HTTP GET method - i.e. there is no left argument (0=no, 1=yes)
-
+    :Field Public Timeout←5000 
     :Field _includeRegex←''        ⍝ compiled regex from IncludeFns
     :Field _excludeRegex←''        ⍝ compiled regex from ExcludeFns
     
@@ -241,7 +241,7 @@
 
     ∇ Server arg;wres;rc;obj;evt;data;ref;ip
       :While ~_stop
-          wres←#.DRC.Wait ServerName 5000 ⍝ Wait for WaitTimeout before timing out
+          wres←#.DRC.Wait ServerName Timeout ⍝ Wait for WaitTimeout before timing out
           ⍝ wres: (return code) (object name) (command) (data)
           (rc obj evt data)←4↑wres
           :Select rc
