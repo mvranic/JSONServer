@@ -459,6 +459,7 @@
           :AndIf ##.HtmlInterface∧~(⊂Page)∊(,'/')'/favicon.ico'
               →0⍴⍨'(Request method should be POST)'Fail 405×~(⊂Method)∊(1 ##.AllowHttpGet)/'post' 'get'
               →0⍴⍨'(Bad URI)'Fail 400×'/'≠⊃Page
+          :AndIf Method≡'post'   
               →0⍴⍨'(Content-Type should be application/json)'Fail 400×~'application/json'begins lc'content-type'GetFromTable Headers
           :EndIf
           →0⍴⍨'(Cannot accept query parameters)'Fail 400×~0∊⍴query
