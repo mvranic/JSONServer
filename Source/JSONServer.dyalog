@@ -319,7 +319,8 @@
 
     ∇ HandleJSONRequest ns;payload;fn;resp
       ExitIf HtmlInterface∧ns.Req.Page≡'/favicon.ico'
-      :If 0∊⍴fn←1↓'.'@('/'∘=)ns.Req.Page
+      :If 0∊⍴fn←1↓'.'@('/'∘=)ns.Req.Page     
+      ⎕←'Access Handler1'
       :AndIf 0∊⍴Handler
           ExitIf('No function specified')ns.Req.Fail 400×~HtmlInterface∧'get'≡ns.Req.Method
           ns.Req.Response.Headers←1 2⍴'Content-Type' 'text/html'
@@ -357,14 +358,18 @@
           :Trap Debug↓0
               :If ~0∊⍴fn
                  resp←(CodeLocation⍎fn)payload
-              :Else
+              :Else           
+                 ⎕←'Access Handler2'
+   
                  resp←#.(⍎Handler) payload 
               :Endif
           :Else
               ns.Req.Response.JSON←1 ⎕JSON ⎕DMX.(EM Message)
               :if ~0∊⍴fn
                  ExitIf('Error running method "',fn,'"')ns.Req.Fail 500
-              :Else
+              :Else            
+                 ⎕←'Access Handler3'
+   
                  ExitIf('Error running method "',fn,'" with handler "',Handler,'"')ns.Req.Fail 500           
               :EndIf
           :EndTrap
