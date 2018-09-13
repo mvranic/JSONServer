@@ -16,6 +16,7 @@
     :Field Public Threaded←1       ⍝ Run server in separathe thread (0=no, 1=yes)
     :Field Public AllowHttpGet←0   ⍝ Allow HTTP GET method - i.e. there is no left argument (0=no, 1=yes)
     :Field Public Timeout←5000 
+    :Field Public Handler←''       ⍝ Used if HTTP function is not defined i.e. "/"
     :Field _includeRegex←''        ⍝ compiled regex from IncludeFns
     :Field _excludeRegex←''        ⍝ compiled regex from ExcludeFns
     
@@ -319,6 +320,7 @@
     ∇ HandleJSONRequest ns;payload;fn;resp
       ExitIf HtmlInterface∧ns.Req.Page≡'/favicon.ico'
       :If 0∊⍴fn←1↓'.'@('/'∘=)ns.Req.Page
+      :AndIf 0∊⍴Handler
           ExitIf('No function specified')ns.Req.Fail 400×~HtmlInterface∧'get'≡ns.Req.Method
           ns.Req.Response.Headers←1 2⍴'Content-Type' 'text/html'
           ns.Req.Response.JSON←HtmlPage
@@ -338,23 +340,33 @@
      
       :If ClassInterface
       :AndIf (⊂fn)∊'_Classes' '_Delete' '_Get' '_Instances' '_New' '_Run' '_Serialize' '_Set'
-          :Trap Debug↓0
+          :Trap Debug↓0        
               resp←(⍎fn)payload
           :Else
               ns.Req.Response.JSON←1 ⎕JSON ⎕DMX.(EM Message)
               ExitIf('Error running method "',fn,'"')ns.Req.Fail 500
           :EndTrap
       :Else
-     
-          ExitIf('Invalid function "',fn,'"')ns.Req.Fail CheckFunctionName fn
-          ExitIf('Invalid function "',fn,'"')ns.Req.Fail 404×3≠⌊|nameClass←{0::0 ⋄ CodeLocation.⎕NC⊂⍵}fn
-          ExitIf('"',fn,'" is not a monadic result-returning function')ns.Req.Fail 400×(nameClass<0)⍱1 1 0≡⊃CodeLocation.⎕AT fn
-     
+          
+          :If ~0∊⍴fn
+              ExitIf('Invalid function "',fn,'"')ns.Req.Fail CheckFunctionName fn
+              ExitIf('Invalid function "',fn,'"')ns.Req.Fail 404×3≠⌊|nameClass←{0::0 ⋄ CodeLocation.⎕NC⊂⍵}fn
+              ExitIf('"',fn,'" is not a monadic result-returning function')ns.Req.Fail 400×(nameClass<0)⍱1 1 0≡⊃CodeLocation.⎕AT fn
+          :EndIf
+
           :Trap Debug↓0
-              resp←(CodeLocation⍎fn)payload
+              :If ~0∊⍴fn
+                 resp←(CodeLocation⍎fn)payload
+              :Else
+                 resp←(⍎Handler) payload 
+              :Endif
           :Else
               ns.Req.Response.JSON←1 ⎕JSON ⎕DMX.(EM Message)
-              ExitIf('Error running method "',fn,'"')ns.Req.Fail 500
+              :if ~0∊⍴fn
+                 ExitIf('Error running method "',fn,'"')ns.Req.Fail 500
+              :Else
+                 ExitIf('Error running method "',fn,'" with handler "',Handler,'"')ns.Req.Fail 500           
+              :EndIf
           :EndTrap
       :EndIf
       :Trap Debug↓0
