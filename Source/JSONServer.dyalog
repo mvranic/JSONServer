@@ -363,8 +363,7 @@
               :Else           
                  ⎕←'Access Handler2'
    
-                 fnobj←⍎Handler
-                 resp←#.fnobj payload 
+                 resp←(CodeLocation⍎Handler)payload 
                 ⎕←'End Access Handler2'
    
               :Endif
