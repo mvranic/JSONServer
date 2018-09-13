@@ -358,7 +358,7 @@
               :If ~0∊⍴fn
                  resp←(CodeLocation⍎fn)payload
               :Else
-                 resp←(⍎Handler) payload 
+                 resp←#.(⍎Handler) payload 
               :Endif
           :Else
               ns.Req.Response.JSON←1 ⎕JSON ⎕DMX.(EM Message)
