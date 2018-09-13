@@ -2,7 +2,7 @@
 ⍝ JSONServer automatic startup
 ⍝ General logic:
 ⍝   Command line parameters take priority over configuration file which takes priority over default
-
+ ⎕←'Start Auto start.'
  empty←0∊⍴
  getEnv←{2 ⎕NQ'.' 'GetEnvironment'⍵}
 
@@ -19,6 +19,7 @@
      ref←⎕NEW #.JSONServer
 
      :For (param value) :In ↓params  ⍝ need to load one at a time because params can override what's in the configuration file
+         ⎕←'Assign param: ( ',param ,' , ',(⍕value),' )'
          param(ref{⍺⍺⍎⍺,'←⍵'})value
          :If 'ConfigFile'≡param
              :If 0≠⊃(rc msg)←ref.LoadConfiguration value
@@ -27,6 +28,7 @@
          :EndIf
      :EndFor
 
+     ⎕←'Starting JSON server.'
      :If 0≠⊃(rc msg)←ref.Start
          ('Unable to start server - ',msg)⎕SIGNAL 16
      :EndIf
@@ -37,3 +39,5 @@
          :EndWhile
      :EndIf
  :EndIf
+ ⎕←'Finished Auto start.'
+   
