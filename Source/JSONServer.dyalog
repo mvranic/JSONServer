@@ -317,17 +317,19 @@
       :EndHold
     ∇
 
-    ∇ HandleJSONRequest ns;payload;fn;resp
+    ∇ HandleJSONRequest ns;payload;fn;resp;fnobj
       ExitIf HtmlInterface∧ns.Req.Page≡'/favicon.ico'
       :If 0∊⍴fn←1↓'.'@('/'∘=)ns.Req.Page     
-      ⎕←'Access Handler1'
+      ⎕←'Access Handler1. fn=',fn
       :AndIf 0∊⍴Handler
-          ExitIf('No function specified')ns.Req.Fail 400×~HtmlInterface∧'get'≡ns.Req.Method
+      ⎕←'Err Access Handler1'
+         ExitIf('No function specified')ns.Req.Fail 400×~HtmlInterface∧'get'≡ns.Req.Method
           ns.Req.Response.Headers←1 2⍴'Content-Type' 'text/html'
           ns.Req.Response.JSON←HtmlPage
           →0
       :EndIf
-     
+      ⎕←'End Access Handler1'  
+
       :Trap Debug↓0
           :Select ns.Req.Method 
           :Case 'post'
@@ -361,8 +363,12 @@
               :Else           
                  ⎕←'Access Handler2'
    
-                 resp←#.(⍎Handler) payload 
+                 fnobj←⍎Handler
+                 resp←#.fnobj payload 
+                ⎕←'End Access Handler2'
+   
               :Endif
+
           :Else
               ns.Req.Response.JSON←1 ⎕JSON ⎕DMX.(EM Message)
               :if ~0∊⍴fn
@@ -370,7 +376,8 @@
               :Else            
                  ⎕←'Access Handler3'
    
-                 ExitIf('Error running method "',fn,'" with handler "',Handler,'"')ns.Req.Fail 500           
+                 ExitIf('Error running method "',fn,'" with handler "',Handler,'"')ns.Req.Fail 500    
+                  ⎕←'Access Handler3 done'       
               :EndIf
           :EndTrap
       :EndIf
