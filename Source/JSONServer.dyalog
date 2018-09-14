@@ -96,7 +96,7 @@
       Log'JSONServer started on port ',⍕Port
       Log'CodeLocation is ',⍕CodeLocation
       :If HtmlInterface
-          Log'Click http',(~Secure)↓'s://localhost:',(⍕Port),' to access web interface'
+          Log'Click http',(~Secure)↓'s://localhost:',(⍕Port),'/ui to access web interface'
       :EndIf
     ∇
 
@@ -319,27 +319,26 @@
 
     ∇ HandleJSONRequest ns;payload;fn;resp;fnobj
       ExitIf HtmlInterface∧ns.Req.Page≡'/favicon.ico'
-      :If 0∊⍴fn←1↓'.'@('/'∘=)ns.Req.Page     
-      ⎕←'Access Handler1. fn=',fn
-      :AndIf 0∊⍴Handler
-      ⎕←'Err Access Handler1'
+      :If ~0∊⍴fn←1↓'.'@('/'∘=)ns.Req.Page
+      :AndIf fn≡'ui'     
          ExitIf('No function specified')ns.Req.Fail 400×~HtmlInterface∧'get'≡ns.Req.Method
           ns.Req.Response.Headers←1 2⍴'Content-Type' 'text/html'
           ns.Req.Response.JSON←HtmlPage
           →0
       :EndIf
-      ⎕←'End Access Handler1'  
-
-      :Trap Debug↓0
-          :Select ns.Req.Method 
-          :Case 'post'
-              payload←{0∊⍴⍵:⍵ ⋄ 0 ⎕JSON ⍵}ns.Req.Body 
-          :Case 'get'
-              payload←{0∊⍴⍵:⍵ ⋄ 0 ⎕JSON ⍵}ns.Req.Body 
-          :Endselect
-      :Else
-          →0⍴⍨'Could not parse payload as JSON'ns.Req.Fail 400
-      :EndTrap
+     
+      :If 0∊⍴Handler
+          :Trap Debug↓0
+               :Select ns.Req.Method 
+               :Case 'post'
+                    payload←{0∊⍴⍵:⍵ ⋄ 0 ⎕JSON ⍵}ns.Req.Body 
+               :Case 'get'
+                    payload←{0∊⍴⍵:⍵ ⋄ 0 ⎕JSON ⍵}ns.Req.Body 
+               :Endselect
+          :Else
+                →0⍴⍨'Could not parse payload as JSON'ns.Req.Fail 400
+          :EndTrap
+      :EndIf
      
       :If ClassInterface
       :AndIf (⊂fn)∊'_Classes' '_Delete' '_Get' '_Instances' '_New' '_Run' '_Serialize' '_Set'
@@ -363,9 +362,8 @@
               :Else           
                  ⎕←'Access Handler2'
    
-                 resp←(CodeLocation⍎Handler)payload 
+                 resp←(CodeLocation⍎Handler)payload req
                 ⎕←'End Access Handler2'
-   
               :Endif
 
           :Else
@@ -479,9 +477,9 @@
           Complete←('get'≡Method)∨(length←'content-length'GetFromTable Headers)≡,'0' ⍝ we're a GET or 0 content-length
           Complete∨←(0∊⍴length)>∨/'chunked'⍷'transfer-encoding'GetFromTable Headers ⍝ or no length supplied and we're not chunked
           :If Complete
-          :AndIf ##.HtmlInterface∧~(⊂Page)∊(,'/')'/favicon.ico'
-              →0⍴⍨'(Request method should be POST)'Fail 405×~(⊂Method)∊(1 ##.AllowHttpGet)/'post' 'get'
-              →0⍴⍨'(Bad URI)'Fail 400×'/'≠⊃Page
+          :AndIf ##.HtmlInterface∧~(⊂Page)∊(,'/ui')'/favicon.ico'
+              →0⍴⍨'(Request method should be POST)'Fail 405×~Method≡'post'
+              →0⍴⍨'(Bad URI)'Fail 400×'/ui'≠⊃Page
           :AndIf Method≡'post'   
               →0⍴⍨'(Content-Type should be application/json)'Fail 400×~'application/json'begins lc'content-type'GetFromTable Headers
           :EndIf
