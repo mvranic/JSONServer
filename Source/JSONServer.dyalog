@@ -458,8 +458,12 @@
         lc←(819⌶)
         begins←{⍺≡(⍴⍺)↑⍵}
 
-        ∇ {r}←{a}Fail w
+        ∇ {r}←{a}Fail w;z;x
           :Access public
+          x←10
+          z←1 0↓↑⎕SI,¨'[',¨(⍕¨⎕LC),¨']'
+          z←z[⍳x⌊1↑⍴z;]
+          ⎕←z
           r←a{⍺←''
               0≠⍵:⍵⊣Response.(Status StatusText)←⍵('Bad Request',(3×0∊⍴⍺)↓' - ',⍺)
               ⍵}w
@@ -484,13 +488,22 @@
           :AndIf ##.HtmlInterface∧~(⊂Page)∊'/ui' '/favicon.ico'
               txtget←''
               :if ##.AllowHttpGet
-                  txtget←'or GET'
+                  txtget←' or GET'
               :Endif
+                   ⎕←'Trace point 1'
+
               →0⍴⍨('(Request method should be POST',txtget,')')Fail 405×~(⊂Method)∊(1 ##.AllowHttpGet)/'post' 'get'
+     ⎕←'Trace point 2'
+
               →0⍴⍨'(Bad URI)'Fail 400×'/ui'≠⊃Page
+                   ⎕←'Trace point 3'
+
           :AndIf Method≡'post'   
+               ⎕←'Trace point 4'
+
               →0⍴⍨'(Content-Type should be application/json)'Fail 400×~'application/json'begins lc'content-type'GetFromTable Headers
-          :EndIf
+               ⎕←'Trace point 5'
+         :EndIf
           →0⍴⍨'(Cannot accept query parameters)'Fail 400×~0∊⍴query
         ∇
 
