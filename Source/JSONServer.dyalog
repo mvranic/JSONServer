@@ -327,13 +327,18 @@
           →0
       :EndIf
      
-      :If 0∊⍴Handler
           :Trap Debug↓0
                :Select ns.Req.Method 
                :Case 'post'
-                    payload←{0∊⍴⍵:⍵ ⋄ 0 ⎕JSON ⍵}ns.Req.Body 
+                    payload←ns.Req.Body 
+                    :If ~0∊⍴Handler
+                        payload←{0∊⍴⍵:⍵ ⋄ 0 ⎕JSON ⍵}payload
+                    :EndIf
                :Case 'get'
-                    payload←{0∊⍴⍵:⍵ ⋄ 0 ⎕JSON ⍵}ns.Req.Body 
+                    payload←ns.Req.Body 
+                    :If ~0∊⍴Handler
+                        payload←{0∊⍴⍵:⍵ ⋄ 0 ⎕JSON ⍵}payload
+                    :EndIf
                :Endselect
           :Else
                 →0⍴⍨'Could not parse payload as JSON'ns.Req.Fail 400
