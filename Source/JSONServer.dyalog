@@ -327,23 +327,22 @@
           →0
       :EndIf
      
-          :Trap Debug↓0
-               :Select ns.Req.Method 
-               :Case 'post'
-                    payload←ns.Req.Body 
-                    :If ~0∊⍴Handler
-                        payload←{0∊⍴⍵:⍵ ⋄ 0 ⎕JSON ⍵}payload
-                    :EndIf
-               :Case 'get'
-                    payload←ns.Req.Body 
-                    :If ~0∊⍴Handler
-                        payload←{0∊⍴⍵:⍵ ⋄ 0 ⎕JSON ⍵}payload
-                    :EndIf
-               :Endselect
+      :Trap Debug↓0
+           :Select ns.Req.Method 
+           :Case 'post'
+              payload←ns.Req.Body 
+              :If ~0∊⍴Handler
+                  payload←{0∊⍴⍵:⍵ ⋄ 0 ⎕JSON ⍵}payload
+              :EndIf
+            :Case 'get'
+               payload←ns.Req.Body 
+               :If ~0∊⍴Handler
+                   payload←{0∊⍴⍵:⍵ ⋄ 0 ⎕JSON ⍵}payload
+                :EndIf
+            :Endselect
           :Else
                 →0⍴⍨'Could not parse payload as JSON'ns.Req.Fail 400
           :EndTrap
-      :EndIf
      
       :If ClassInterface
       :AndIf (⊂fn)∊'_Classes' '_Delete' '_Get' '_Instances' '_New' '_Run' '_Serialize' '_Set'
