@@ -465,7 +465,7 @@
               ⍵}w
         ∇
 
-        ∇ make args;query;origin;length
+        ∇ make args;query;origin;length;txtget
           :Access public
           :Implements constructor
           (Method Input HTTPVersion Headers)←args
@@ -481,8 +481,12 @@
           Complete←('get'≡Method)∨(length←'content-length'GetFromTable Headers)≡,'0' ⍝ we're a GET or 0 content-length
           Complete∨←(0∊⍴length)>∨/'chunked'⍷'transfer-encoding'GetFromTable Headers ⍝ or no length supplied and we're not chunked
           :If Complete
-          :AndIf ##.HtmlInterface∧~(⊂Page)∊(,'/ui')'/favicon.ico'
-              →0⍴⍨'(Request method should be POST)'Fail 405×~Method≡'post'
+          :AndIf ##.HtmlInterface∧~(⊂Page)∊'/ui' '/favicon.ico'
+              txtget←''
+              :if ##.AllowHttpGet
+                  txtget←'or GET'
+              :Endif
+              →0⍴⍨('(Request method should be POST',txtget,')')Fail 405×~(⊂Method)∊(1 ##.AllowHttpGet)/'post' 'get'
               →0⍴⍨'(Bad URI)'Fail 400×'/ui'≠⊃Page
           :AndIf Method≡'post'   
               →0⍴⍨'(Content-Type should be application/json)'Fail 400×~'application/json'begins lc'content-type'GetFromTable Headers
