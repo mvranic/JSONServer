@@ -1,0 +1,31 @@
+﻿⍝ NB requires v16.0 or later
+)clear
+⎕pw←1000
+)ns Zodiac
+]load /devt/JSONServer/Sample/* -target=Zodiac
+⎕VR 'Zodiac.GetSign'
+Zodiac.GetSign 10 31
+
+(halloween←⎕NS '').(month day)←10 31
+hweensign←Zodiac.GetSignObject halloween
+hweensign.(month day sign)
+⎕JSON hweensign
+
+]load /Devt/JSONServer/Source/JSONServer
+srv←⎕NEW JSONServer
+srv.CodeLocation←#.Zodiac
+srv.Port←8080
+srv.Threaded←0
+srv.AllowHttpGet←1
+srv.Logging←1
+srv.Handler←'HandlerWrapper'
+
+srv.Start
+⍝ Now run the client demo
+srv.Stop
+
+)clear
+]load /devt/JSONServer/Source/JSONServer
+⎕←(srv rc)←JSONServer.Run (8080 '/devt/JSONServer/Sample')
+
+⍝ dyalog /devt/JSONServer/Distribution/JSONServer.dws -Port=8080 -CodeLocation="/devt/JSONServer/Sample" -Threaded=0 -AllowHttpGet=1 -Logging=1 -Handler="HandlerWrapper"

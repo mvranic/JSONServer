@@ -458,12 +458,15 @@
         lc←(819⌶)
         begins←{⍺≡(⍴⍺)↑⍵}
 
-        ∇ {r}←{a}Fail w;z;x
+        ∇ {r}←{a}Fail w;stack;stacklevel
           :Access public
-          x←10
-          z←1 0↓↑⎕SI,¨'[',¨(⍕¨⎕LC),¨']'
-          z←z[⍳x⌊1↑⍴z;]
-          ⎕←z
+          :If ##.Logging
+             ⎕←'Log stack:'
+             stacklevel←20
+             stack←1 0↓↑⎕SI,¨'[',¨(⍕¨⎕LC),¨']'
+             stack←stack[⍳stacklevel⌊1↑⍴stack;]
+             ⎕←stack
+          :EndIf
           r←a{⍺←''
               0≠⍵:⍵⊣Response.(Status StatusText)←⍵('Bad Request',(3×0∊⍴⍺)↓' - ',⍺)
               ⍵}w
@@ -487,22 +490,15 @@
           :If Complete
           :AndIf ##.HtmlInterface∧~(⊂Page)∊'/ui' '/favicon.ico'
               txtget←''
-              :if ##.AllowHttpGet
+              :If ##.AllowHttpGet
                   txtget←' or GET'
-              :Endif
-                   ⎕←'Trace point 1'
+              :EndIf
+                 msg←'(Request method should be POST',txtget,')'
+                 →0⍴⍨msg Fail 405×~(⊂Method)∊(1 ##.AllowHttpGet)/'post' 'get'
 
-              →0⍴⍨('(Request method should be POST',txtget,')')Fail 405×~(⊂Method)∊(1 ##.AllowHttpGet)/'post' 'get'
-     ⎕←'Trace point 2'
-
-              →0⍴⍨'(Bad URI)'Fail 400×'/ui'≠⊃Page
-                   ⎕←'Trace point 3'
-
+                 →0⍴⍨'(Bad URI)'Fail 400×~(⊂Page)∊'/ui' (,'/')
           :AndIf Method≡'post'   
-               ⎕←'Trace point 4'
-
               →0⍴⍨'(Content-Type should be application/json)'Fail 400×~'application/json'begins lc'content-type'GetFromTable Headers
-               ⎕←'Trace point 5'
          :EndIf
           →0⍴⍨'(Cannot accept query parameters)'Fail 400×~0∊⍴query
         ∇
