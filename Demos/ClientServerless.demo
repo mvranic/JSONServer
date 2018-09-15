@@ -1,0 +1,10 @@
+﻿⍝ Calling JSONServer
+)clear
+
+]load HttpCommand
+cmd←⎕NEW HttpCommand
+cmd.(Command URL)←'POST' 'localhost:8080/'
+cmd.Headers⍪←'content-type' ''text/html''
+cmd.Params←'hallo world!'
+q←cmd.Run
+q.(rc Data HttpStatus HttpMessage)
