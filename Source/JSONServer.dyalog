@@ -331,12 +331,12 @@
            :Select ns.Req.Method 
            :Case 'post'
               payload←ns.Req.Body 
-              :If ~0∊⍴Handler
+              :If 0∊⍴Handler
                   payload←{0∊⍴⍵:⍵ ⋄ 0 ⎕JSON ⍵}payload
               :EndIf
             :Case 'get'
                payload←ns.Req.Body 
-               :If ~0∊⍴Handler
+               :If 0∊⍴Handler
                    payload←{0∊⍴⍵:⍵ ⋄ 0 ⎕JSON ⍵}payload
                 :EndIf
             :Endselect
