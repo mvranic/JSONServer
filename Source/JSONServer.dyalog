@@ -331,14 +331,30 @@
            :Select ns.Req.Method 
            :Case 'post'
               payload←ns.Req.Body 
+              :If Logging
+                 ⎕←'Org. POST payload:'
+                 ⎕←payload
+              :EndIf
               :If 0∊⍴Handler
                   payload←{0∊⍴⍵:⍵ ⋄ 0 ⎕JSON ⍵}payload
               :EndIf
+              :If Logging
+                 ⎕←'POST payload:'
+                 ⎕←payload
+              :EndIf
             :Case 'get'
                payload←ns.Req.Body 
-               :If 0∊⍴Handler
-                   payload←{0∊⍴⍵:⍵ ⋄ 0 ⎕JSON ⍵}payload
-                :EndIf
+              :If Logging
+                 ⎕←'OrgGET payload:'
+                 ⎕←payload
+              :EndIf
+              :If 0∊⍴Handler
+                 payload←{0∊⍴⍵:⍵ ⋄ 0 ⎕JSON ⍵}payload
+              :EndIf
+              :If Logging
+                 ⎕←'GET payload:'
+                 ⎕←payload
+              :EndIf
             :Endselect
           :Else
                 →0⍴⍨'Could not parse payload as JSON'ns.Req.Fail 400
