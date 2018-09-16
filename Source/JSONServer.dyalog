@@ -469,6 +469,7 @@
         ∇ {r}←{a}Fail w;stack;stacklevel
           :Access public
           :If ##.Logging
+          :AndIf 0≠w
              ⎕←'Log stack:'
              stacklevel←20
              stack←1 0↓↑⎕SI,¨'[',¨(⍕¨⎕LC),¨']'
@@ -478,7 +479,7 @@
           r←a{⍺←''
               0≠⍵:⍵⊣Response.(Status StatusText)←⍵('Bad Request',(3×0∊⍴⍺)↓' - ',⍺)
               ⍵}w
-        ∇
+         ∇
 
         ∇ make args;query;origin;length;txtget
           :Access public
