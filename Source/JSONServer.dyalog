@@ -377,16 +377,22 @@
           :EndIf
 
           :Trap Debug↓0
+              ⎕←'Exec:'
+              ⎕←'payload:'payload
+              ⎕←'Handler:'Handler
+              ⎕←'req:'req
               :If (~0∊⍴Handler)∧0∊⍴fn 
                  resp←(CodeLocation⍎Handler)payload req
               :Else           
-         resp←(CodeLocation⍎fn)payload
+                resp←(CodeLocation⍎fn)payload
               :Endif
 
           :Else
+              ⎕←⎕DMX
               ns.Req.Response.JSON←1 ⎕JSON ⎕DMX.(EM Message)
               ExitIf('Error running method "',fn,'"')ns.Req.Fail 500
           :EndTrap
+           ⎕←'End Exec.'
       :EndIf
       :Trap Debug↓0
           ⍝ :If ~(~0∊⍴Handler)∧0∊⍴fn 
