@@ -96,7 +96,7 @@
       Log'JSONServer started on port ',⍕Port
       Log'CodeLocation is ',⍕CodeLocation
       :If HtmlInterface
-          Log'Click http',(~Secure)↓'s://localhost:',(⍕Port),'/ui to access web interface'
+          Log'Click http',(~Secure)↓'s://localhost:',(⍕Port),' to access web interface'
       :EndIf
     ∇
 
@@ -319,9 +319,9 @@
 
     ∇ HandleJSONRequest ns;payload;fn;resp;fnobj
       ExitIf HtmlInterface∧ns.Req.Page≡'/favicon.ico'
-      :If ~0∊⍴fn←1↓'.'@('/'∘=)ns.Req.Page
-      :AndIf fn≡'ui'     
-         ExitIf('No function specified')ns.Req.Fail 400×~HtmlInterface∧'get'≡ns.Req.Method
+      :If 0∊⍴fn←1↓'.'@('/'∘=)ns.Req.Page
+      :AndIf HtmlInterface     
+         ExitIf('No function specified')ns.Req.Fail 400×~'get'≡ns.Req.Method
           ns.Req.Response.Headers←1 2⍴'Content-Type' 'text/html'
           ns.Req.Response.JSON←HtmlPage
           →0
@@ -335,7 +335,7 @@
                  ⎕←'Org. POST payload:'
                  ⎕←payload
               :EndIf
-              :If 0∊⍴Handler
+              :If ~(~0∊⍴Handler)∧0∊⍴fn 
                   payload←{0∊⍴⍵:⍵ ⋄ 0 ⎕JSON ⍵}payload
               :EndIf
               :If Logging
@@ -348,7 +348,7 @@
                  ⎕←'OrgGET payload:'
                  ⎕←payload
               :EndIf
-              :If 0∊⍴Handler
+              :If ~(~0∊⍴Handler)∧0∊⍴fn 
                  payload←{0∊⍴⍵:⍵ ⋄ 0 ⎕JSON ⍵}payload
               :EndIf
               :If Logging
@@ -370,36 +370,28 @@
           :EndTrap
       :Else
           
-          :If ~0∊⍴fn
+          :If ~0∊⍴fn          
               ExitIf('Invalid function "',fn,'"')ns.Req.Fail CheckFunctionName fn
               ExitIf('Invalid function "',fn,'"')ns.Req.Fail 404×3≠⌊|nameClass←{0::0 ⋄ CodeLocation.⎕NC⊂⍵}fn
               ExitIf('"',fn,'" is not a monadic result-returning function')ns.Req.Fail 400×(nameClass<0)⍱1 1 0≡⊃CodeLocation.⎕AT fn
           :EndIf
 
           :Trap Debug↓0
-              :If ~0∊⍴fn
-                 resp←(CodeLocation⍎fn)payload
-              :Else           
-                 ⎕←'Access Handler2'
-   
+              :If (~0∊⍴Handler)∧0∊⍴fn 
                  resp←(CodeLocation⍎Handler)payload req
-                ⎕←'End Access Handler2'
+              :Else           
+		 resp←(CodeLocation⍎fn)payload
               :Endif
 
           :Else
               ns.Req.Response.JSON←1 ⎕JSON ⎕DMX.(EM Message)
-              :if ~0∊⍴fn
-                 ExitIf('Error running method "',fn,'"')ns.Req.Fail 500
-              :Else            
-                 ⎕←'Access Handler3'
-   
-                 ExitIf('Error running method "',fn,'" with handler "',Handler,'"')ns.Req.Fail 500    
-                  ⎕←'Access Handler3 done'       
-              :EndIf
+              ExitIf('Error running method "',fn,'"')ns.Req.Fail 500
           :EndTrap
       :EndIf
       :Trap Debug↓0
-          ns.Req.Response.JSON←⎕UCS'UTF-8'⎕UCS 1 ⎕JSON resp
+          ⍝ :If ~(~0∊⍴Handler)∧0∊⍴fn 
+             ns.Req.Response.JSON←⎕UCS'UTF-8'⎕UCS 1 ⎕JSON resp
+	      ⍝ :EndIf
       :Else
           :If FlattenOutput>0
               :Trap 0
@@ -504,7 +496,7 @@
           Complete←('get'≡Method)∨(length←'content-length'GetFromTable Headers)≡,'0' ⍝ we're a GET or 0 content-length
           Complete∨←(0∊⍴length)>∨/'chunked'⍷'transfer-encoding'GetFromTable Headers ⍝ or no length supplied and we're not chunked
           :If Complete
-          :AndIf ##.HtmlInterface∧~(⊂Page)∊'/ui' '/favicon.ico'
+          :AndIf ##.HtmlInterface∧~(⊂Page)∊'/' '/favicon.ico'
               txtget←''
               :If ##.AllowHttpGet
                   txtget←' or GET'
@@ -512,7 +504,7 @@
                  msg←'(Request method should be POST',txtget,')'
                  →0⍴⍨msg Fail 405×~(⊂Method)∊(1 ##.AllowHttpGet)/'post' 'get'
 
-                 →0⍴⍨'(Bad URI)'Fail 400×~(⊂Page)∊'/ui' (,'/')
+                 →0⍴⍨'(Bad URI)'Fail 400×~(⊂Page)∊⊂(,'/')
           :AndIf Method≡'post'   
               →0⍴⍨'(Content-Type should be application/json)'Fail 400×~'application/json'begins lc'content-type'GetFromTable Headers
          :EndIf

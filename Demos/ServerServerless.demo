@@ -19,6 +19,7 @@ srv.Threaded←0
 srv.AllowHttpGet←1
 srv.Logging←1
 srv.Handler←'HandlerWrapper'
+srv.HtmlInterface←0
 
 srv.Start
 ⍝ Now run the client demo

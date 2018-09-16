@@ -1,0 +1,201 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Serveless",
+		"_postman_id": "02493c53-47e7-2064-9245-758f00fbb167",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "healthz-get",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Response time is less than 200ms\"] = responseTime < 500;",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"tests[\"Body matches string\"] = responseBody.has(\"Health check\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:8080/healthz",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/javascript",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "charset",
+						"value": "utf-8",
+						"description": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[1,1]"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "healthz-post",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Response time is less than 200ms\"] = responseTime < 500;",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"tests[\"Body matches string\"] = responseBody.has(\"Health check\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:8080/healthz",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/javascript",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "charset",
+						"value": "utf-8",
+						"description": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[1,1]"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "serverless-post",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Response time is less than 200ms\"] = responseTime < 500;",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"tests[\"Body matches string\"] = responseBody.has(\"Hallo world\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:8080/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/javascript",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "charset",
+						"value": "utf-8",
+						"description": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"event-time\": \"2018-09-16 11:04:36.4252284 +0000 UTC\", \"extensions\": {\"request\": \"<LocalRequest: POST http://localhost:6445/>\"}, \"event-type\": \"application/x-www-form-urlencoded\", \"event-namespace\": \"cli.kubeless.io\", \"data\": \"Hallo world\", \"event-id\": \"AAQ8GNwcgvM_cp0\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "serverless-get",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Response time is less than 200ms\"] = responseTime < 500;",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"tests[\"Body matches string\"] = responseBody.has(\"Can not find data\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:8080/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/javascript",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "charset",
+						"value": "utf-8",
+						"description": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"event-time\": \"2018-09-16 11:04:36.4252284 +0000 UTC\", \"extensions\": {\"request\": \"<LocalRequest: POST http://localhost:6445/>\"}, \"event-type\": \"application/x-www-form-urlencoded\", \"event-namespace\": \"cli.kubeless.io\", \"data\": \"Hallo world\", \"event-id\": \"AAQ8GNwcgvM_cp0\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
