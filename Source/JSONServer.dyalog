@@ -380,7 +380,7 @@
               :If (~0∊⍴Handler)∧0∊⍴fn 
                  resp←(CodeLocation⍎Handler)payload req
               :Else           
-		 resp←(CodeLocation⍎fn)payload
+         resp←(CodeLocation⍎fn)payload
               :Endif
 
           :Else
@@ -391,7 +391,7 @@
       :Trap Debug↓0
           ⍝ :If ~(~0∊⍴Handler)∧0∊⍴fn 
              ns.Req.Response.JSON←⎕UCS'UTF-8'⎕UCS 1 ⎕JSON resp
-	      ⍝ :EndIf
+          ⍝ :EndIf
       :Else
           :If FlattenOutput>0
               :Trap 0
@@ -468,17 +468,20 @@
 
         ∇ {r}←{a}Fail w;stack;stacklevel
           :Access public
+          r←a{⍺←''
+              0≠⍵:⍵⊣Response.(Status StatusText)←⍵('Bad Request',(3×0∊⍴⍺)↓' - ',⍺)
+              ⍵}w
           :If ##.Logging
           :AndIf 0≠w
+             ⎕←'Fail:'
+             ⎕←r       
              ⎕←'Log stack:'
              stacklevel←20
              stack←1 0↓↑⎕SI,¨'[',¨(⍕¨⎕LC),¨']'
              stack←stack[⍳stacklevel⌊1↑⍴stack;]
              ⎕←stack
           :EndIf
-          r←a{⍺←''
-              0≠⍵:⍵⊣Response.(Status StatusText)←⍵('Bad Request',(3×0∊⍴⍺)↓' - ',⍺)
-              ⍵}w
+         
          ∇
 
         ∇ make args;query;origin;length;txtget
