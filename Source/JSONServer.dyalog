@@ -498,7 +498,8 @@
           Method←lc Method
          
           Response←⎕NS''
-          Response.(Status StatusText Headers JSON)←200 'OK'(1 2⍴'Content-Type' 'application/json; charset=utf-8')''
+          ⍝ ... Todo: Access-Control-Allow-Origin should be removed.
+          Response.(Status StatusText Headers JSON)←200 'OK'(1 2⍴'Content-Type' 'application/json; charset=utf-8' 'Access-Control-Allow-Origin' '*')''
          
           Host←'host'GetFromTable Headers
           (Page query)←'?'split Input
