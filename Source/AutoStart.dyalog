@@ -6,8 +6,8 @@
  empty←0∊⍴
  getEnv←{2 ⎕NQ'.' 'GetEnvironment'⍵}
 
- numParams←0 0 1 0 0 1 1 1 0 0
- validParams←'ConfigFile' 'CodeLocation' 'Port' 'InitializeFn' 'AllowedFns' 'Threaded' 'AllowHttpGet' 'Logging' 'Handler' 'HtmlInterface' ⍝ to be added - 'Secure' 'RootCertDir' 'SSLValidation' 'ServerCertFile' 'ServerKeyFile'
+ numParams←0 0 1 0 0 1 1 1 0 0 0 0
+ validParams←'ConfigFile' 'CodeLocation' 'Port' 'InitializeFn' 'AllowedFns' 'Threaded' 'AllowHttpGet' 'Logging' 'Handler' 'HtmlInterface' 'AccessControlAllowOrigin' 'ContentType'⍝ to be added - 'Secure' 'RootCertDir' 'SSLValidation' 'ServerCertFile' 'ServerKeyFile'
  values←getEnv¨validParams
  mask←~empty¨values
  ((mask∧numParams)/values)←⍎¨(mask∧numParams)/values
