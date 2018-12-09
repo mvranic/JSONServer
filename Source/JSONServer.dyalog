@@ -17,6 +17,9 @@
     :Field Public AllowHttpGet←0   ⍝ Allow HTTP GET method - i.e. there is no left argument (0=no, 1=yes)
     :Field Public Timeout←5000 
     :Field Public Handler←''       ⍝ Used if HTTP function is not defined i.e. "/"
+    :Field Public AccessControlAllowOrigin←'*' ⍝ HTTP header Access-Control-Allow-Origin 
+    ⍝ ... Todo: Access-Control-Allow-Origin should be removed as default.
+    :Field Public ContentType←'application/json; charset=utf-8' ⍝ HTTP header Content-Type
     :Field _includeRegex←''        ⍝ compiled regex from IncludeFns
     :Field _excludeRegex←''        ⍝ compiled regex from ExcludeFns
     
@@ -490,7 +493,7 @@
          
          ∇
 
-        ∇ make args;query;origin;length;txtget
+        ∇ make args;query;origin;length;txtget;headers
           :Access public
           :Implements constructor
           (Method Input HTTPVersion Headers)←args
@@ -498,8 +501,16 @@
           Method←lc Method
          
           Response←⎕NS''
-          ⍝ ... Todo: Access-Control-Allow-Origin should be removed.
-          Response.(Status StatusText Headers JSON)←200 'OK'(2 2⍴'Content-Type' 'application/json; charset=utf-8' 'Access-Control-Allow-Origin' '*')''
+          headers←0 2⍴''
+          :If 0=⊃⍴ContentType
+              headers⍪←'Content-Type' ContentType 
+          :EndIf
+          
+          :If 0=⊃⍴AccessControlAllowOrigin
+              headers⍪←'Access-Control-Allow-Origin' AccessControlAllowOrigin 
+          :EndIf
+          
+          Response.(Status StatusText Headers JSON)←200 'OK' headers ''
          
           Host←'host'GetFromTable Headers
           (Page query)←'?'split Input
