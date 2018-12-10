@@ -502,12 +502,12 @@
          
           Response←⎕NS''
           headers←0 2⍴''
-          :If 0=⊃⍴ContentType
-              headers⍪←'Content-Type' ContentType 
+          :If 0=⊃⍴##.ContentType
+              headers⍪←'Content-Type' ##.ContentType 
           :EndIf
           
-          :If 0=⊃⍴AccessControlAllowOrigin
-              headers⍪←'Access-Control-Allow-Origin' AccessControlAllowOrigin 
+          :If 0=⊃⍴##.AccessControlAllowOrigin
+              headers⍪←'Access-Control-Allow-Origin' ##.AccessControlAllowOrigin 
           :EndIf
           
           Response.(Status StatusText Headers JSON)←200 'OK' headers ''
