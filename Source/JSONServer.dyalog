@@ -502,11 +502,11 @@
          
           Response←⎕NS''
           headers←0 2⍴''
-          :If 0=⊃⍴##.ContentType
+          :If 0≠⊃⍴##.ContentType
               headers⍪←'Content-Type' ##.ContentType 
           :EndIf
           
-          :If 0=⊃⍴##.AccessControlAllowOrigin
+          :If 0≠⊃⍴##.AccessControlAllowOrigin
               headers⍪←'Access-Control-Allow-Origin' ##.AccessControlAllowOrigin 
           :EndIf
           
